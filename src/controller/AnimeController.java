@@ -1,6 +1,7 @@
 package controller;
 
 import main.Main;
+import main.Menu;
 import model.Anime;
 import model.Tracker;
 
@@ -12,7 +13,7 @@ public class AnimeController implements Controller {
 
     @Override
     public void printByStatus(String status) {
-        List<Anime> animes = Main.animeList.stream()
+        List<Anime> animes = Menu.animeList.stream()
                                         .filter(x -> x.getStatus().equals(status))
                                         .collect(Collectors.toList());
 
@@ -26,7 +27,7 @@ public class AnimeController implements Controller {
 
     @Override
     public Tracker find(int id) {
-        return Main.animeList.stream()
+        return Menu.animeList.stream()
                 .filter(x -> x.getId() == id)
                 .findFirst()
                 .orElse(null);
@@ -35,18 +36,18 @@ public class AnimeController implements Controller {
     @Override
     public void insert(Tracker tracker) {
         tracker.setId(++increment);
-        Main.animeList.add((Anime) tracker);
+        Menu.animeList.add((Anime) tracker);
     }
 
     @Override
     public void update(int id, Tracker tracker){
         Anime anime = (Anime) find(id);
-        int index = Main.animeList.indexOf(anime);
+        int index = Menu.animeList.indexOf(anime);
 
         Anime updateAnime = (Anime) tracker;
         updateAnime.setId(anime.getId());
         updateAnime.setStartDate(anime.getStartDate());
-        Main.animeList.set(index, updateAnime);
+        Menu.animeList.set(index, updateAnime);
 
         System.out.println("Sukses update data");
     }
@@ -55,7 +56,7 @@ public class AnimeController implements Controller {
     public void delete(int id) {
         Anime anime = (Anime) find(id);
         if(anime != null) {
-            Main.animeList.remove((Anime) find(id));
+            Menu.animeList.remove((Anime) find(id));
             System.out.println("Sukses menghapus anime dari tracker");
         }else{
             System.out.println("Id anime tidak ditemukan");

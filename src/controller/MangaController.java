@@ -1,6 +1,7 @@
 package controller;
 
 import main.Main;
+import main.Menu;
 import model.LightNovel;
 import model.Manga;
 import model.Tracker;
@@ -13,7 +14,7 @@ public class MangaController implements Controller {
 
     @Override
     public void printByStatus(String status) {
-        List<Manga> mangas = Main.mangaList.stream()
+        List<Manga> mangas = Menu.mangaList.stream()
                 .filter(x -> x.getStatus().equals(status))
                 .collect(Collectors.toList());
 
@@ -24,7 +25,7 @@ public class MangaController implements Controller {
 
     @Override
     public Tracker find(int id) {
-        return Main.mangaList.stream()
+        return Menu.mangaList.stream()
                 .filter(x -> x.getId() == id)
                 .findFirst()
                 .orElse(null);
@@ -33,18 +34,18 @@ public class MangaController implements Controller {
     @Override
     public void insert(Tracker tracker) {
         tracker.setId(++increment);
-        Main.mangaList.add((Manga) tracker);
+        Menu.mangaList.add((Manga) tracker);
     }
 
     @Override
     public void update(int id, Tracker tracker){
         Manga manga = (Manga) find(id);
-        int index = Main.mangaList.indexOf(manga);
+        int index = Menu.mangaList.indexOf(manga);
 
         Manga updateLN = (Manga) tracker;
         updateLN.setId(manga.getId());
         updateLN.setStartDate(manga.getStartDate());
-        Main.mangaList.set(index, manga);
+        Menu.mangaList.set(index, manga);
 
         System.out.println("Sukses update data");
     }
@@ -53,7 +54,7 @@ public class MangaController implements Controller {
     public void delete(int id) {
         Manga manga = (Manga) find(id);
         if(manga != null) {
-            Main.mangaList.remove((Manga) find(id));
+            Menu.mangaList.remove((Manga) find(id));
             System.out.println("Sukses menghapus manga dari tracker");
         }else{
             System.out.println("Id manga tidak ditemukan");

@@ -1,6 +1,7 @@
 package controller;
 
 import main.Main;
+import main.Menu;
 import model.Anime;
 import model.LightNovel;
 import model.Tracker;
@@ -13,7 +14,7 @@ public class LightNovelController implements Controller {
 
     @Override
     public void printByStatus(String status) {
-        List<LightNovel> lightNovels = Main.lightNovelList.stream()
+        List<LightNovel> lightNovels = Menu.lightNovelList.stream()
                 .filter(x -> x.getStatus().equals(status))
                 .collect(Collectors.toList());
 
@@ -24,7 +25,7 @@ public class LightNovelController implements Controller {
 
     @Override
     public Tracker find(int id) {
-        return Main.lightNovelList.stream()
+        return Menu.lightNovelList.stream()
                 .filter(x -> x.getId() == id)
                 .findFirst()
                 .orElse(null);
@@ -33,18 +34,18 @@ public class LightNovelController implements Controller {
     @Override
     public void insert(Tracker tracker) {
         tracker.setId(++increment);
-        Main.lightNovelList.add((LightNovel) tracker);
+        Menu.lightNovelList.add((LightNovel) tracker);
     }
 
     @Override
     public void update(int id, Tracker tracker){
         LightNovel lightNovel = (LightNovel) find(id);
-        int index = Main.lightNovelList.indexOf(lightNovel);
+        int index = Menu.lightNovelList.indexOf(lightNovel);
 
         LightNovel updateLN = (LightNovel) tracker;
         updateLN.setId(lightNovel.getId());
         updateLN.setStartDate(lightNovel.getStartDate());
-        Main.lightNovelList.set(index, updateLN);
+        Menu.lightNovelList.set(index, updateLN);
 
         System.out.println("Sukses update data");
     }
@@ -53,7 +54,7 @@ public class LightNovelController implements Controller {
     public void delete(int id) {
         LightNovel lightNovel = (LightNovel) find(id);
         if(lightNovel != null) {
-            Main.lightNovelList.remove((LightNovel) find(id));
+            Menu.lightNovelList.remove((LightNovel) find(id));
             System.out.println("Sukses menghapus light novel dari tracker");
         }else{
             System.out.println("Id light novel tidak ditemukan");
