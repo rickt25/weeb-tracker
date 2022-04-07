@@ -40,7 +40,7 @@ public class Anime extends Tracker {
     }
 
     @Override
-    public void printProgress() {
+    public void printDetail() {
 
     }
 }

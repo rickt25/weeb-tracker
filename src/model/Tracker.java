@@ -61,6 +61,6 @@ public abstract class Tracker {
 
     public void setGenre(String genre) { this.genre = genre; }
 
-    public abstract void printProgress();
+    public abstract void printDetail();
 
 }

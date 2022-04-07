@@ -9,6 +9,8 @@ import model.Tracker;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static main.Menu.printLineTable;
+
 public class MangaController implements Controller {
     private static int increment = 0;
 
@@ -17,10 +19,21 @@ public class MangaController implements Controller {
         List<Manga> mangas = Menu.mangaList.stream()
                 .filter(x -> x.getStatus().equals(status))
                 .collect(Collectors.toList());
-
-        for(Manga manga : mangas){
-            System.out.println("diatas udah filter by status, tinggal print manganya ngabs");
+        printLineTable();
+        System.out.println("| Id | Manga's Name                        | Volume | Genre                                    | Progress  | Status      |");
+        printLineTable();
+        if(mangas.size() > 0){
+            for(Manga manga : mangas){
+                System.out.printf("| %-2d | %-35s | %-6s | %-40s | CH %-6d | %-11s |\n", manga.getId(), manga.getNameSeries(), manga.getCurrentVolume(), manga.getGenre(), manga.getCurrentChapter(), manga.getStatus());
+            }
+        }else{
+            for(int i = 0; i < 54; i++){
+                System.out.print("=");
+            }
+            System.out.println("No Data");
         }
+        printLineTable();
+        System.out.println();
     }
 
     @Override
@@ -35,19 +48,6 @@ public class MangaController implements Controller {
     public void insert(Tracker tracker) {
         tracker.setId(++increment);
         Menu.mangaList.add((Manga) tracker);
-    }
-
-    @Override
-    public void update(int id, Tracker tracker){
-        Manga manga = (Manga) find(id);
-        int index = Menu.mangaList.indexOf(manga);
-
-        Manga updateLN = (Manga) tracker;
-        updateLN.setId(manga.getId());
-        updateLN.setStartDate(manga.getStartDate());
-        Menu.mangaList.set(index, manga);
-
-        System.out.println("Sukses update data");
     }
 
     @Override

@@ -29,7 +29,7 @@ public class Manga extends Tracker {
     }
 
     @Override
-    public void printProgress() {
+    public void printDetail() {
 
     }
 }
