@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class MangaController implements Controller {
+    private static int increment = 0;
+
     @Override
     public void printByStatus(String status) {
         List<Manga> mangas = Main.mangaList.stream()
@@ -30,6 +32,7 @@ public class MangaController implements Controller {
 
     @Override
     public void insert(Tracker tracker) {
+        tracker.setId(++increment);
         Main.mangaList.add((Manga) tracker);
     }
 

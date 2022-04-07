@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class LightNovelController implements Controller {
+    private static int increment = 0;
+
     @Override
     public void printByStatus(String status) {
         List<LightNovel> lightNovels = Main.lightNovelList.stream()
@@ -30,6 +32,7 @@ public class LightNovelController implements Controller {
 
     @Override
     public void insert(Tracker tracker) {
+        tracker.setId(++increment);
         Main.lightNovelList.add((LightNovel) tracker);
     }
 
