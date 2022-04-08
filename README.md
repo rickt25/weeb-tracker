@@ -10,6 +10,8 @@ Anggota Kelompok :
 
 ## Description
 
+![](./dokumentasi/MainMenu.png)
+
 Aplikasi yang kami buat adalah _**Weeb Tracker**_ yaitu aplikasi console untuk tracking progress menonton **anime** atau membaca **manga**. 
 Selain itu, dalam aplikasi ini kita dapat menyimpan list anime yang akan ditonton kedepannya dan juga melihat history anime yang kita pernah saksikan.
 
