@@ -12,13 +12,13 @@ import static main.Menu.printLineTable;
 public class Anime extends Tracker {
     private int season;
     private int totalEpisode;
-    private int currEpisode;
+    private int currentEpisode;
 
-    public Anime(String nameSeries, String status, int rating, String genre, int seasons, int totalEpisode, int currEpisode) {
+    public Anime(String nameSeries, String status, int rating, String genre, int seasons, int totalEpisode, int currentEpisode) {
         super(nameSeries, status, rating, genre);
         this.season = seasons;
         this.totalEpisode = totalEpisode;
-        this.currEpisode = currEpisode;
+        this.currentEpisode = currentEpisode;
     }
 
     public int getSeason() {
@@ -38,28 +38,27 @@ public class Anime extends Tracker {
     }
 
     public int getCurrEpisode() {
-        return currEpisode;
+        return currentEpisode;
     }
 
     public void setCurrEpisode(int currEpisode) {
-        this.currEpisode = currEpisode;
+        this.currentEpisode = currEpisode;
     }
 
 
 
     @Override
     public void printDetail() {
-        System.out.println("=========");
-        System.out.println("| Anime |");
-        System.out.println("=========");
-        System.out.println("Name: " + getNameSeries());
-        System.out.println("Seasons: " + getSeason());
-        System.out.println("Episodes: " + (getTotalEpisode() == -1 ? "N/A" : getTotalEpisode()));
-        System.out.println("Status: " + getStatus());
-        System.out.println("Genre: " + getGenre());
-        System.out.println("Progress: " + getCurrEpisode() + "/" + (getTotalEpisode() > 0 ?  String.valueOf(getTotalEpisode()) : '?'));
-        System.out.println("Started watching on: " + getStartDate());
-        System.out.println();
+    	System.out.println("================================================================");
+    	System.out.printf("| Name    : %-50s |\n", getNameSeries());
+        System.out.println("================================================================");
+        System.out.printf("| Seasons : %-50s |\n", getSeason());
+        System.out.printf("| Episodes: %-50s |\n", (getTotalEpisode() == -1 ? "N/A" : getTotalEpisode()));
+        System.out.printf("| Status  : %-50s |\n", getStatus());
+        System.out.printf("| Genre   : %-50s |\n", getGenre());
+        System.out.printf("| Progress: %-50s |\n", getCurrEpisode() + "/" + (getTotalEpisode() > 0 ?  String.valueOf(getTotalEpisode()) : '?'));
+        System.out.printf("| Started : %-50s |\n", getStartDate());
+        System.out.println("================================================================");
     }
 
 }

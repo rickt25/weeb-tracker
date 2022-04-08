@@ -53,9 +53,9 @@ public class Menu {
     private void addTracker(){
         int choice = 0;
         do{
-            System.out.println("===============");
-            System.out.println("| Add Tracker |");
-            System.out.println("===============");
+        	System.out.println("====================");
+            System.out.println("|   Add  Tracker   |");
+            System.out.println("====================");
             trackerType();
             try{
                 choice = sc.nextInt();
@@ -131,9 +131,9 @@ public class Menu {
         int choice = 0;
         boolean loopMenu = true;
         do{
-            System.out.println("================");
-            System.out.println("| View Tracker |");
-            System.out.println("================");
+        	System.out.println("====================");
+            System.out.println("|   View Tracker   |");
+            System.out.println("====================");
             trackerType();
             try{
                 choice = sc.nextInt();
@@ -527,7 +527,7 @@ public class Menu {
     }
 
     private void menuView(String type){
-        System.out.println("1. View " + type + " detail by id");
+        System.out.println("1. View " + type + " detail by Id");
         System.out.println("2. Filter View");
         System.out.println("3. Back");
         System.out.print(">> ");
@@ -565,10 +565,11 @@ public class Menu {
     }
 
     private void trackerType(){
-        System.out.println("1. Anime");
-        System.out.println("2. Manga");
-        System.out.println("3. Light Novel");
-        System.out.println("4. Back");
+        System.out.println("| 1. Anime         |");
+        System.out.println("| 2. Manga         |");
+        System.out.println("| 3. Light Novel   |");
+        System.out.println("| 4. Back          |");
+        System.out.println("====================");
         System.out.print(">> ");
     }
 
@@ -580,8 +581,9 @@ public class Menu {
             System.out.println("| Tracker's status |");
             System.out.println("====================");
             for(int i = 0; i < 3; i++){
-                System.out.println((i + 1) + ". " + menuStatus[i]);
+                System.out.printf("|%d. %-14s |\n" , i+1, menuStatus[i]);
             }
+            System.out.println("====================");
             System.out.print(">> ");
             selectStatus = inputNumber(1, "", 0);
 
@@ -596,7 +598,7 @@ public class Menu {
             input = sc.nextLine();
             if(max > 0){
                 if(input.length() > max){
-                    System.out.println("Input exceeds max");
+                    System.out.println("Input exceeds max!");
                     input = "";
                 }
             }
@@ -621,7 +623,7 @@ public class Menu {
             }
             if(max > 0){
                 if(input > max){
-                    System.out.println("Input exceeds max");
+                    System.out.println("Input exceeds max!");
                     continue;
                 }
             }

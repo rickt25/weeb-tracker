@@ -36,16 +36,15 @@ public class Manga extends Tracker {
 
     @Override
     public void printDetail() {
-        System.out.println("=========");
-        System.out.println("| Manga |");
-        System.out.println("=========");
-        System.out.println("Name: " + getNameSeries());
-        System.out.println("Volume: " + getCurrentVolume());
-        System.out.println("Status: " + getStatus());
-        System.out.println("Genre: " + getGenre());
-        System.out.println("Progress: " + getCurrentChapter());
-        System.out.println("Started reading on: " + getStartDate());
-        System.out.println();
+    	System.out.println("================================================================");
+    	System.out.printf("| Name    : %-50s |\n", getNameSeries());
+        System.out.println("================================================================");
+        System.out.printf("| Volume  : %-50s |\n", getCurrentVolume());
+        System.out.printf("| Status  : %-50s |\n", getStatus());
+        System.out.printf("| Genre   : %-50s |\n", getGenre());
+        System.out.printf("| Progress: %-50s |\n", getCurrentChapter());
+        System.out.printf("| Started : %-50s |\n", getStartDate());
+        System.out.println("================================================================");
     }
 
 }
