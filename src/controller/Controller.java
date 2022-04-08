@@ -3,8 +3,9 @@ package controller;
 import model.Tracker;
 
 public interface Controller {
-    void printByStatus(String status);
-    Tracker find(int id); // this function will return an object
+    Tracker find(int id, String status); // this function will return an object
     void insert(Tracker tracker);
-    void delete(int id);
+    void delete(Tracker tracker);
+    void printAll();
+    void printByStatus(String status);
 }

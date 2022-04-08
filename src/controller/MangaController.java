@@ -15,6 +15,51 @@ public class MangaController implements Controller {
     private static int increment = 0;
 
     @Override
+    public Tracker find(int id, String status) {
+        return Menu.mangaList.stream()
+                .filter(x -> x.getId() == id && (x.getStatus().equals(status) || status.isEmpty()))
+                .findFirst()
+                .orElse(null);
+    }
+
+    @Override
+    public void insert(Tracker tracker) {
+        tracker.setId(++increment);
+        Menu.mangaList.add((Manga) tracker);
+    }
+
+    @Override
+    public void delete(Tracker tracker) {
+        Manga manga = (Manga) tracker;
+        if(manga != null) {
+            Menu.mangaList.remove(tracker);
+            System.out.println("Delete Succeeded from Manga Tracker");
+        }else{
+            System.out.println("Id not found");
+        }
+        System.out.println();
+    }
+
+    @Override
+    public void printAll() {
+        printLineTable();
+        System.out.println("| Id | Manga's Name                        | Volume | Genre                                    | Progress  | Status      |");
+        printLineTable();
+        if(Menu.mangaList.size() > 0) {
+            for (Manga mangaView : Menu.mangaList) {
+                System.out.printf("| %-2d | %-35s | %-6s | %-40s | CH %-6d | %-11s |\n", mangaView.getId(), mangaView.getNameSeries(), mangaView.getCurrentVolume(), mangaView.getGenre(), mangaView.getCurrentChapter(), mangaView.getStatus());
+            }
+        }else{
+            for(int i = 0; i < 54; i++){
+                System.out.print(" ");
+            }
+            System.out.println("No Data");
+        }
+        printLineTable();
+        System.out.println();
+    }
+
+    @Override
     public void printByStatus(String status) {
         List<Manga> mangas = Menu.mangaList.stream()
                 .filter(x -> x.getStatus().equals(status))
@@ -28,36 +73,11 @@ public class MangaController implements Controller {
             }
         }else{
             for(int i = 0; i < 54; i++){
-                System.out.print("=");
+                System.out.print(" ");
             }
             System.out.println("No Data");
         }
         printLineTable();
         System.out.println();
-    }
-
-    @Override
-    public Tracker find(int id) {
-        return Menu.mangaList.stream()
-                .filter(x -> x.getId() == id)
-                .findFirst()
-                .orElse(null);
-    }
-
-    @Override
-    public void insert(Tracker tracker) {
-        tracker.setId(++increment);
-        Menu.mangaList.add((Manga) tracker);
-    }
-
-    @Override
-    public void delete(int id) {
-        Manga manga = (Manga) find(id);
-        if(manga != null) {
-            Menu.mangaList.remove((Manga) find(id));
-            System.out.println("Sukses menghapus manga dari tracker");
-        }else{
-            System.out.println("Id manga tidak ditemukan");
-        }
     }
 }
