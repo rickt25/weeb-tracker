@@ -6,7 +6,6 @@ import controller.MangaController;
 import model.Anime;
 import model.LightNovel;
 import model.Manga;
-import model.Tracker;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -34,6 +33,7 @@ public class Menu {
             }finally {
                 sc.nextLine();
             }
+            System.out.println();
             switch(choice){
                 case 1:
                     addTracker();
@@ -52,8 +52,10 @@ public class Menu {
 
     private void addTracker(){
         int choice = 0;
-
         do{
+            System.out.println("===============");
+            System.out.println("| Add Tracker |");
+            System.out.println("===============");
             trackerType();
             try{
                 choice = sc.nextInt();
@@ -87,7 +89,7 @@ public class Menu {
         String name, status, genre;
         int rating, seasons, totalEpisode, currEpisode;
         name = inputString("Input Anime's Name [Max: 35 Character]", 35);
-        seasons = inputNumber(-1, "Input Anime's Seasons (Default 1)", 0);
+        seasons = inputNumber(1, "Input Anime's Seasons (Default 1)", 0);
         genre = inputString("Input Anime's genre (Separate each genre with a comma) [Max: 40 Character]", 40);
         totalEpisode = inputNumber(-1, "Input Anime's Total Episode (If you know input the total, otherwise input -1)", 0);
         currEpisode = inputNumber(1, "Input Current Episode", (totalEpisode == -1) ? 0 : totalEpisode);
@@ -129,6 +131,9 @@ public class Menu {
         int choice = 0;
         boolean loopMenu = true;
         do{
+            System.out.println("================");
+            System.out.println("| View Tracker |");
+            System.out.println("================");
             trackerType();
             try{
                 choice = sc.nextInt();
@@ -138,6 +143,7 @@ public class Menu {
             }finally {
                 sc.nextLine();
             }
+            System.out.println();
             switch(choice){
                 case 1:
                     viewAnimeTracker();
@@ -146,7 +152,7 @@ public class Menu {
                     viewMangaTracker();
                     break;
                 case 3:
-                    insertLNTracker();
+                    viewLNTracker();
                     break;
                 case 4:
                     loopMenu = false;
@@ -165,7 +171,7 @@ public class Menu {
         if(animeList.size() > 0){
             do{
                 if(filter.isEmpty()){
-                    tableAnimeView();
+                    animeController.printAll();
                 }else{
                     animeController.printByStatus(filter);
                 }
@@ -182,79 +188,79 @@ public class Menu {
                 if(choice == 1){
                     int selectedId = 0;
                     do{
-                        tableAnimeView();
-                        selectedId = inputNumber(1, "Input Id to see the detail", 0);
-                        anime = (Anime)animeController.find(selectedId);
-                    }while(anime == null);
-                    System.out.println("=========");
-                    System.out.println("| Anime |");
-                    System.out.println("=========");
-                    System.out.println();
-                    System.out.println("Name: " + anime.getNameSeries());
-                    System.out.println("Seasons: " + anime.getSeason());
-                    System.out.println("Episodes: " + (anime.getTotalEpisode() == -1 ? "N/A" : anime.getTotalEpisode()));
-                    System.out.println("Status: " + anime.getStatus());
-                    System.out.println("Genre: " + anime.getGenre());
-                    System.out.println("Progress: " + anime.getCurrEpisode() + "/" + (anime.getTotalEpisode() > 0 ?  String.valueOf(anime.getTotalEpisode()) : '?'));
-                    System.out.println("Started watching on: " + anime.getStartDate());
-                    System.out.println();
-                    int choiceUpdate;
-                    do{
-                        System.out.println("1. Update Status");
-                        System.out.println("2. Update Progress");
-                        System.out.println("3. Edit Details");
-                        System.out.println("4. Back");
-                        System.out.print(">> ");
-                        try{
-                            choiceUpdate = sc.nextInt();
-                        }catch (Exception e){
-                            System.out.println("Input must be a number!");
-                            continue;
-                        }finally {
-                            sc.nextLine();
-                        }
-
-                        if(choiceUpdate == 1){
-                            anime.setStatus(menuStatus[statusSelect() - 1]);
-                        }else if(choiceUpdate == 2){
-                            int updateProgress = 0;
-                            do{
-                                try{
-                                    updateProgress = sc.nextInt();
-                                }catch (Exception e){
-                                    System.out.println("Input must be a number!");
-                                    continue;
-                                }finally {
-                                    sc.nextLine();
-                                }
-                            }while((updateProgress >= 1 && updateProgress <= (anime.getTotalEpisode() == -1 ? Integer.MAX_VALUE : anime.getTotalEpisode())));
-                            anime.setCurrEpisode(updateProgress);
-                        }else if(choiceUpdate == 3){
-                            String status, genre;
-                            int rating, seasons, totalEpisode, currEpisode;
-                            genre = inputString("Update Anime's genre (Separate each genre with a comma) [Max: 40 Character]", 40);
-                            totalEpisode = inputNumber(-1, "Update Anime's total episode (If you know input the total, otherwise input -1)", 0);
-                            currEpisode = inputNumber(1, "Update Current episode", (totalEpisode == -1) ? 0 : totalEpisode);
-                            rating = inputNumber(1, "Update Anime's rating [1-5]", 5);
-                            status = menuStatus[statusSelect() - 1];
-                            anime.setGenre(genre);
-                            anime.setTotalEpisode(totalEpisode);
-                            anime.setRating(rating);
-                            anime.setCurrEpisode(currEpisode);
-                            anime.setStatus(status);
-                            System.out.println("Update Success...");
-                        }else if(choiceUpdate == 4){
-                            break;
+                        if(filter.isEmpty()){
+                            animeController.printAll();
                         }else{
-                            continue;
+                            animeController.printByStatus(filter);
                         }
-                        break;
-                    }while(true);
+                        selectedId = inputNumber(0, "Input Id to see the detail [Input 0 to 'Cancel']", 0);
+                        anime = (Anime)animeController.find(selectedId, filter);
+                        System.out.println();
+                    }while(anime == null && selectedId != 0);
+                    if(selectedId != 0){
+                        anime.printDetail();
+                        int choiceUpdate;
+                        do{
+                            printMenuDetail();
+                            try{
+                                choiceUpdate = sc.nextInt();
+                            }catch (Exception e){
+                                System.out.println("Input must be a number!");
+                                continue;
+                            }finally {
+                                sc.nextLine();
+                            }
+                            if(choiceUpdate == 1){
+                                anime.setStatus(menuStatus[statusSelect() - 1]);
+                            }else if(choiceUpdate == 2){
+                                int updateProgress = 0;
+                                do{
+                                    try{
+                                        updateProgress = sc.nextInt();
+                                    }catch (Exception e){
+                                        System.out.println("Input must be a number!");
+                                        continue;
+                                    }finally {
+                                        sc.nextLine();
+                                    }
+                                }while((updateProgress >= 1 && updateProgress <= (anime.getTotalEpisode() == -1 ? Integer.MAX_VALUE : anime.getTotalEpisode())));
+                                anime.setCurrEpisode(updateProgress);
+                            }else if(choiceUpdate == 3){
+                                String status, genre;
+                                int rating, seasons, totalEpisode, currEpisode;
+                                genre = inputString("Update Anime's genre (Separate each genre with a comma) [Max: 40 Character]", 40);
+                                totalEpisode = inputNumber(-1, "Update Anime's total episode (If you know input the total, otherwise input -1)", 0);
+                                currEpisode = inputNumber(1, "Update Current episode", (totalEpisode == -1) ? 0 : totalEpisode);
+                                rating = inputNumber(1, "Update Anime's rating [1-5]", 5);
+                                status = menuStatus[statusSelect() - 1];
+                                anime.setGenre(genre);
+                                anime.setTotalEpisode(totalEpisode);
+                                anime.setRating(rating);
+                                anime.setCurrEpisode(currEpisode);
+                                anime.setStatus(status);
+                                System.out.println("Update Success...");
+                            }else if(choiceUpdate == 4){
+                                String confirmDelete;
+                                do{
+                                    confirmDelete = inputString("Are you sure you want to delete this Tracker [y/n] ?", 1);
+                                    confirmDelete.toLowerCase();
+                                    System.out.println();
+                                }while(!confirmDelete.equals("y") && !confirmDelete.equals("n"));
+                                if(confirmDelete.equals("y"))
+                                    animeController.delete(anime);
+                            }else if(choiceUpdate == 5){
+                                break;
+                            }else{
+                                continue;
+                            }
+                            break;
+                        }while(true);
+                    }
                 }else if(choice == 2){
                     int selectStatus;
                     do{
                         if(filter.isEmpty()){
-                            tableAnimeView();
+                            animeController.printAll();
                         }else{
                             animeController.printByStatus(filter);
                         }
@@ -285,7 +291,7 @@ public class Menu {
         if(mangaList.size() > 0){
             do{
                 if(filter.isEmpty()){
-                    tableMangaView();
+                    mangaController.printAll();
                 }else{
                     mangaController.printByStatus(filter);
                 }
@@ -302,78 +308,80 @@ public class Menu {
                 if(choice == 1){
                     int selectedId = 0;
                     do{
-                        tableMangaView();
-                        selectedId = inputNumber(1, "Input Id to see the detail", 0);
-                        manga = (Manga) mangaController.find(selectedId);
-                    }while(manga == null);
-                    System.out.println("=========");
-                    System.out.println("| Manga |");
-                    System.out.println("=========");
-                    System.out.println();
-                    System.out.println("Name: " + manga.getNameSeries());
-                    System.out.println("Volume: " + manga.getCurrentVolume());
-                    System.out.println("Status: " + manga.getStatus());
-                    System.out.println("Genre: " + manga.getGenre());
-                    System.out.println("Progress: " + manga.getCurrentChapter());
-                    System.out.println("Started reading on: " + manga.getStartDate());
-                    System.out.println();
-                    int choiceUpdate;
-                    do{
-                        System.out.println("1. Update Status");
-                        System.out.println("2. Update Progress");
-                        System.out.println("3. Edit Details");
-                        System.out.println("4. Back");
-                        System.out.print(">> ");
-                        try{
-                            choiceUpdate = sc.nextInt();
-                        }catch (Exception e){
-                            System.out.println("Input must be a number!");
-                            continue;
-                        }finally {
-                            sc.nextLine();
-                        }
-
-                        if(choiceUpdate == 1){
-                            manga.setStatus(menuStatus[statusSelect() - 1]);
-                        }else if(choiceUpdate == 2){
-                            int updateProgress = 0;
-                            do{
-                                try{
-                                    updateProgress = sc.nextInt();
-                                }catch (Exception e){
-                                    System.out.println("Input must be a number!");
-                                    continue;
-                                }finally {
-                                    sc.nextLine();
-                                }
-                            }while(!(updateProgress >= 1));
-                            manga.setCurrentChapter(updateProgress);
-                        }else if(choiceUpdate == 3){
-                            String status, genre;
-                            int rating, volume, currChapter;
-                            genre = inputString("Update Manga's genre (Separate each genre with a comma) [Max: 40 Character]", 40);
-                            volume = inputNumber(-1, "Update Manga's volume", 0);
-                            currChapter = inputNumber(1, "Update Current chapter", 0);
-                            rating = inputNumber(1, "Update Manga's rating [1-5]", 5);
-                            status = menuStatus[statusSelect() - 1];
-                            manga.setGenre(genre);
-                            manga.setCurrentVolume(volume);
-                            manga.setRating(rating);
-                            manga.setCurrentChapter(currChapter);
-                            manga.setStatus(status);
-                            System.out.println("Update Success...");
-                        }else if(choiceUpdate == 4){
-                            break;
+                        if(filter.isEmpty()){
+                            mangaController.printAll();
                         }else{
-                            continue;
+                            mangaController.printByStatus(filter);
                         }
-                        break;
-                    }while(true);
+                        selectedId = inputNumber(0, "Input Id to see the detail [Input 0 to 'Cancel']", 0);
+                        manga = (Manga) mangaController.find(selectedId, filter);
+                        System.out.println();
+                    }while(manga == null && selectedId != 0);
+                    if(selectedId != 0){
+                        manga.printDetail();
+                        int choiceUpdate;
+                        do{
+                            printMenuDetail();
+                            try{
+                                choiceUpdate = sc.nextInt();
+                            }catch (Exception e){
+                                System.out.println("Input must be a number!");
+                                continue;
+                            }finally {
+                                sc.nextLine();
+                            }
+
+                            if(choiceUpdate == 1){
+                                manga.setStatus(menuStatus[statusSelect() - 1]);
+                            }else if(choiceUpdate == 2){
+                                int updateProgress = 0;
+                                do{
+                                    try{
+                                        updateProgress = sc.nextInt();
+                                    }catch (Exception e){
+                                        System.out.println("Input must be a number!");
+                                        continue;
+                                    }finally {
+                                        sc.nextLine();
+                                    }
+                                }while(!(updateProgress >= 1));
+                                manga.setCurrentChapter(updateProgress);
+                            }else if(choiceUpdate == 3){
+                                String status, genre;
+                                int rating, volume, currChapter;
+                                genre = inputString("Update Manga's genre (Separate each genre with a comma) [Max: 40 Character]", 40);
+                                volume = inputNumber(-1, "Update Manga's volume", 0);
+                                currChapter = inputNumber(1, "Update Current chapter", 0);
+                                rating = inputNumber(1, "Update Manga's rating [1-5]", 5);
+                                status = menuStatus[statusSelect() - 1];
+                                manga.setGenre(genre);
+                                manga.setCurrentVolume(volume);
+                                manga.setRating(rating);
+                                manga.setCurrentChapter(currChapter);
+                                manga.setStatus(status);
+                                System.out.println("Update Success...");
+                            }else if(choiceUpdate == 4){
+                                String confirmDelete;
+                                do{
+                                    confirmDelete = inputString("Are you sure you want to delete this Tracker [y/n] ?", 1);
+                                    confirmDelete.toLowerCase();
+                                    System.out.println();
+                                }while(!confirmDelete.equals("y") && !confirmDelete.equals("n"));
+                                if(confirmDelete.equals("y"))
+                                    mangaController.delete(manga);
+                            }else if(choiceUpdate == 5){
+                                break;
+                            }else{
+                                continue;
+                            }
+                            break;
+                        }while(true);
+                    }
                 }else if(choice == 2){
                     int selectStatus;
                     do{
                         if(filter.isEmpty()){
-                            tableMangaView();
+                            mangaController.printAll();
                         }else{
                             mangaController.printByStatus(filter);
                         }
@@ -404,7 +412,7 @@ public class Menu {
         if(lightNovelList.size() > 0){
             do{
                 if(filter.isEmpty()){
-                    tableLNView();
+                    lightNovelController.printAll();
                 }else{
                     lightNovelController.printByStatus(filter);
                 }
@@ -421,78 +429,80 @@ public class Menu {
                 if(choice == 1){
                     int selectedId = 0;
                     do{
-                        tableLNView();
-                        selectedId = inputNumber(1, "Input Id to see the detail", 0);
-                        ln = (LightNovel) lightNovelController.find(selectedId);
-                    }while(ln == null);
-                    System.out.println("=========");
-                    System.out.println("| Manga |");
-                    System.out.println("=========");
-                    System.out.println();
-                    System.out.println("Name: " + ln.getNameSeries());
-                    System.out.println("Volume: " + ln.getCurrentVolume());
-                    System.out.println("Status: " + ln.getStatus());
-                    System.out.println("Genre: " + ln.getGenre());
-                    System.out.println("Progress: " + ln.getCurrentPage());
-                    System.out.println("Started reading on: " + ln.getStartDate());
-                    System.out.println();
-                    int choiceUpdate;
-                    do{
-                        System.out.println("1. Update Status");
-                        System.out.println("2. Update Progress");
-                        System.out.println("3. Edit Details");
-                        System.out.println("4. Back");
-                        System.out.print(">> ");
-                        try{
-                            choiceUpdate = sc.nextInt();
-                        }catch (Exception e){
-                            System.out.println("Input must be a number!");
-                            continue;
-                        }finally {
-                            sc.nextLine();
-                        }
-
-                        if(choiceUpdate == 1){
-                            ln.setStatus(menuStatus[statusSelect() - 1]);
-                        }else if(choiceUpdate == 2){
-                            int updateProgress = 0;
-                            do{
-                                try{
-                                    updateProgress = sc.nextInt();
-                                }catch (Exception e){
-                                    System.out.println("Input must be a number!");
-                                    continue;
-                                }finally {
-                                    sc.nextLine();
-                                }
-                            }while(!(updateProgress >= 1));
-                            ln.setCurrentPage(updateProgress);
-                        }else if(choiceUpdate == 3){
-                            String status, genre;
-                            int rating, volume, currPage;
-                            genre = inputString("Update Light Novel's genre (Separate each genre with a comma) [Max: 40 Character]", 40);
-                            volume = inputNumber(-1, "Update Light Novel's volume", 0);
-                            currPage = inputNumber(1, "Update Current page", 0);
-                            rating = inputNumber(1, "Update Light Novel's rating [1-5]", 5);
-                            status = menuStatus[statusSelect() - 1];
-                            ln.setGenre(genre);
-                            ln.setCurrentVolume(volume);
-                            ln.setRating(rating);
-                            ln.setCurrentPage(currPage);
-                            ln.setStatus(status);
-                            System.out.println("Update Success...");
-                        }else if(choiceUpdate == 4){
-                            break;
+                        if(filter.isEmpty()){
+                            lightNovelController.printAll();
                         }else{
-                            continue;
+                            lightNovelController.printByStatus(filter);
                         }
-                        break;
-                    }while(true);
+                        selectedId = inputNumber(0, "Input Id to see the detail [Input 0 to 'Cancel']", 0);
+                        ln = (LightNovel) lightNovelController.find(selectedId, filter);
+                        System.out.println();
+                    }while(ln == null && selectedId != 0);
+                    if(selectedId != 0){
+                        ln.printDetail();
+                        int choiceUpdate;
+                        do{
+                            printMenuDetail();
+                            try{
+                                choiceUpdate = sc.nextInt();
+                            }catch (Exception e){
+                                System.out.println("Input must be a number!");
+                                continue;
+                            }finally {
+                                sc.nextLine();
+                            }
+
+                            if(choiceUpdate == 1){
+                                ln.setStatus(menuStatus[statusSelect() - 1]);
+                            }else if(choiceUpdate == 2){
+                                int updateProgress = 0;
+                                do{
+                                    try{
+                                        updateProgress = sc.nextInt();
+                                    }catch (Exception e){
+                                        System.out.println("Input must be a number!");
+                                        continue;
+                                    }finally {
+                                        sc.nextLine();
+                                    }
+                                }while(!(updateProgress >= 1));
+                                ln.setCurrentPage(updateProgress);
+                            }else if(choiceUpdate == 3){
+                                String status, genre;
+                                int rating, volume, currPage;
+                                genre = inputString("Update Light Novel's genre (Separate each genre with a comma) [Max: 40 Character]", 40);
+                                volume = inputNumber(-1, "Update Light Novel's volume", 0);
+                                currPage = inputNumber(1, "Update Current page", 0);
+                                rating = inputNumber(1, "Update Light Novel's rating [1-5]", 5);
+                                status = menuStatus[statusSelect() - 1];
+                                ln.setGenre(genre);
+                                ln.setCurrentVolume(volume);
+                                ln.setRating(rating);
+                                ln.setCurrentPage(currPage);
+                                ln.setStatus(status);
+                                System.out.println("Update Success...");
+                            }else if(choiceUpdate == 4){
+                                String confirmDelete;
+                                do{
+                                    confirmDelete = inputString("Are you sure you want to delete this Tracker [y/n] ?", 1);
+                                    confirmDelete.toLowerCase();
+                                    System.out.println();
+                                }while(!confirmDelete.equals("y") && !confirmDelete.equals("n"));
+                                if(confirmDelete.equals("y"))
+                                    lightNovelController.delete(ln);
+                            }else if(choiceUpdate == 5){
+                                break;
+                            }else{
+                                continue;
+                            }
+                            break;
+                        }while(true);
+                    }
                 }else if(choice == 2){
                     int selectStatus;
                     do{
                         if(filter.isEmpty()){
-                            tableLNView();
+                            lightNovelController.printAll();
                         }else{
                             lightNovelController.printByStatus(filter);
                         }
@@ -515,37 +525,6 @@ public class Menu {
             System.out.println("You haven't been reading light novel lately...");
         }
     }
-    private void tableAnimeView(){
-        printLineTable();
-        System.out.println("| Id | Anime's Name                        | Season | Genre                                    | Progress  | Status      |");
-        printLineTable();
-        for (Anime animeView : animeList){
-            System.out.printf("| %-2d | %-35s | %-6s | %-40s | %4d/%-4s | %-11s |\n", animeView.getId(), animeView.getNameSeries(), animeView.getSeason(), animeView.getGenre(), animeView.getCurrEpisode(), animeView.getTotalEpisode() > 0 ?  String.valueOf(animeView.getTotalEpisode()) : '?', animeView.getStatus());
-        }
-        printLineTable();
-        System.out.println();
-    }
-
-    private void tableMangaView(){
-        printLineTable();
-        System.out.println("| Id | Manga's Name                        | Volume | Genre                                    | Progress  | Status      |");
-        printLineTable();
-        for (Manga mangaView : mangaList){
-            System.out.printf("| %-2d | %-35s | %-6s | %-40s | CH %-6d | %-11s |\n", mangaView.getId(), mangaView.getNameSeries(), mangaView.getCurrentVolume(), mangaView.getGenre(), mangaView.getCurrentChapter(), mangaView.getStatus());
-        }
-        printLineTable();
-        System.out.println();
-    }
-    private void tableLNView(){
-        printLineTable();
-        System.out.println("| Id | Light Novel's Name                        | Volume | Genre                                    | Progress  | Status      |");
-        printLineTable();
-        for (LightNovel lnView : lightNovelList){
-            System.out.printf("| %-2d | %-35s | %-6s | %-40s | PG %-6d | %-11s |\n", lnView.getId(), lnView.getNameSeries(), lnView.getCurrentVolume(), lnView.getGenre(), lnView.getCurrentPage(), lnView.getStatus());
-        }
-        printLineTable();
-        System.out.println();
-    }
 
     private void menuView(String type){
         System.out.println("1. View " + type + " detail by id");
@@ -559,6 +538,14 @@ public class Menu {
             System.out.print("=");
         }
         System.out.println();
+    }
+    private void printMenuDetail(){
+        System.out.println("1. Update Status");
+        System.out.println("2. Update Progress");
+        System.out.println("3. Edit Details");
+        System.out.println("4. Delete Tracker");
+        System.out.println("5. Back");
+        System.out.print(">> ");
     }
 
     private void homeMenu(){

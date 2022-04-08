@@ -1,7 +1,13 @@
 package model;
 
+import main.Menu;
+
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static main.Menu.printLineTable;
 
 public class Anime extends Tracker {
     private int season;
@@ -39,8 +45,21 @@ public class Anime extends Tracker {
         this.currEpisode = currEpisode;
     }
 
+
+
     @Override
     public void printDetail() {
-
+        System.out.println("=========");
+        System.out.println("| Anime |");
+        System.out.println("=========");
+        System.out.println("Name: " + getNameSeries());
+        System.out.println("Seasons: " + getSeason());
+        System.out.println("Episodes: " + (getTotalEpisode() == -1 ? "N/A" : getTotalEpisode()));
+        System.out.println("Status: " + getStatus());
+        System.out.println("Genre: " + getGenre());
+        System.out.println("Progress: " + getCurrEpisode() + "/" + (getTotalEpisode() > 0 ?  String.valueOf(getTotalEpisode()) : '?'));
+        System.out.println("Started watching on: " + getStartDate());
+        System.out.println();
     }
+
 }
