@@ -11,9 +11,6 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Menu {
-    public static ArrayList<Anime> animeList = new ArrayList<>();
-    public static ArrayList<Manga> mangaList = new ArrayList<>();
-    public static ArrayList<LightNovel> lightNovelList = new ArrayList<>();
     public static AnimeController animeController = new AnimeController();
     public static MangaController mangaController = new MangaController();
     public static LightNovelController lightNovelController = new LightNovelController();
@@ -35,17 +32,10 @@ public class Menu {
             }
             System.out.println();
             switch(choice){
-                case 1:
-                    addTracker();
-                    break;
-                case 2:
-                    viewTracker();
-                    break;
-                case 3:
-                    loopMenu = false;
-                    continue;
-                default:
-                    break;
+                case 1: addTracker(); break;
+                case 2: viewTracker(); break;
+                case 3: loopMenu = false; continue;
+                default: break;
             }
         }while(loopMenu);
     }
@@ -66,19 +56,11 @@ public class Menu {
                 sc.nextLine();
             }
             switch(choice){
-                case 1:
-                    insertAnimeTracker();
-                    break;
-                case 2:
-                    insertMangaTracker();
-                    break;
-                case 3:
-                    insertLNTracker();
-                    break;
-                case 4:
-                    break;
-                default:
-                    continue;
+                case 1: insertAnimeTracker(); break;
+                case 2: insertMangaTracker(); break;
+                case 3: insertLNTracker(); break;
+                case 4: break;
+                default: continue;
             }
             break;
         }while(true);
@@ -95,7 +77,7 @@ public class Menu {
         currEpisode = inputNumber(1, "Input Current Episode", (totalEpisode == -1) ? 0 : totalEpisode);
         rating = inputNumber(1, "Input Anime's Rating [1-5]", 5);
         status = menuStatus[statusSelect() - 1];
-        anime = new Anime(name, status, rating, genre, seasons, totalEpisode, currEpisode);
+        anime = new Anime(69, name, status, rating, genre, seasons, totalEpisode, currEpisode);
         animeController.insert(anime);
     }
 
@@ -109,7 +91,7 @@ public class Menu {
         currentChap = inputNumber(1, "Input Manga's current chapter", 0);
         rating = inputNumber(1, "Input Manga's rating [1-5]", 5);
         status = menuStatus[statusSelect() - 1];
-        manga = new Manga(name, status, rating, genre, currentVolume, currentChap);
+        manga = new Manga(69, name, status, rating, genre, currentVolume, currentChap);
         mangaController.insert(manga);
     }
 
@@ -123,7 +105,7 @@ public class Menu {
         currentPage = inputNumber(1, "Input Light Novel's current page", 0);
         rating = inputNumber(1, "Input Light Novel's rating [1-5]", 5);
         status = menuStatus[statusSelect() - 1];
-        Ln = new LightNovel(name, status, rating, genre, currentVolume, currentPage);
+        Ln = new LightNovel(69, name, status, rating, genre, currentVolume, currentPage);
         lightNovelController.insert(Ln);
     }
 
@@ -131,7 +113,7 @@ public class Menu {
         int choice = 0;
         boolean loopMenu = true;
         do{
-        	System.out.println("====================");
+        	  System.out.println("====================");
             System.out.println("|   View Tracker   |");
             System.out.println("====================");
             trackerType();
@@ -145,20 +127,11 @@ public class Menu {
             }
             System.out.println();
             switch(choice){
-                case 1:
-                    viewAnimeTracker();
-                    break;
-                case 2:
-                    viewMangaTracker();
-                    break;
-                case 3:
-                    viewLNTracker();
-                    break;
-                case 4:
-                    loopMenu = false;
-                    break;
-                default:
-                    break;
+                case 1: viewAnimeTracker(); break;
+                case 2: viewMangaTracker(); break;
+                case 3: viewLNTracker(); break;
+                case 4: loopMenu = false; break;
+                default: break;
             }
         }while(loopMenu);
     }
@@ -168,7 +141,7 @@ public class Menu {
         boolean loop = true;
         String filter = "";
         Anime anime = null;
-        if(animeList.size() > 0){
+        if(animeController.checkTracker()){
             do{
                 if(filter.isEmpty()){
                     animeController.printAll();
@@ -288,7 +261,7 @@ public class Menu {
         boolean loop = true;
         String filter = "";
         Manga manga = null;
-        if(mangaList.size() > 0){
+        if(mangaController.checkTracker()){
             do{
                 if(filter.isEmpty()){
                     mangaController.printAll();
@@ -409,7 +382,7 @@ public class Menu {
         boolean loop = true;
         String filter = "";
         LightNovel ln = null;
-        if(lightNovelList.size() > 0){
+        if(lightNovelController.checkTracker()){
             do{
                 if(filter.isEmpty()){
                     lightNovelController.printAll();

@@ -2,6 +2,7 @@ package model;
 
 import main.Menu;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -10,8 +11,14 @@ import static main.Menu.printLineTable;
 public class LightNovel extends Tracker {
     private int currentVolume, currentPage;
 
-    public LightNovel(String nameSeries, String status, int rating, String genre, int currentVolume, int currentPage) {
-        super(nameSeries, status, rating, genre);
+    public LightNovel(int id, int userId, String nameSeries, String status, Date startDate, int rating, String genre, int currentVolume, int currentPage) {
+        super(id, userId, nameSeries, status, startDate, rating, genre);
+        this.currentVolume = currentVolume;
+        this.currentPage = currentPage;
+    }
+
+    public LightNovel(int userId, String nameSeries, String status, int rating, String genre, int currentVolume, int currentPage) {
+        super(userId, nameSeries, status, rating, genre);
         this.currentVolume = currentVolume;
         this.currentPage = currentPage;
     }

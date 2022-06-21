@@ -1,5 +1,6 @@
 package controller;
 
+import facades.TrackerFacade;
 import main.Main;
 import main.Menu;
 import model.Anime;
@@ -7,17 +8,23 @@ import model.LightNovel;
 import model.Manga;
 import model.Tracker;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static main.Menu.printLineTable;
 
 public class LightNovelController implements Controller {
-    private static int increment = 0;
+    TrackerFacade trackerFacade = TrackerFacade.getInstance();
+
+    @Override
+    public boolean checkTracker() {
+        return trackerFacade.manga.getMangaList().size() > 0;
+    }
 
     @Override
     public Tracker find(int id, String status) {
-        return Menu.lightNovelList.stream()
+        return trackerFacade.lightNovel.getLightNovelList().stream()
                 .filter(x -> x.getId() == id && (x.getStatus().equals(status) || status.isEmpty()))
                 .findFirst()
                 .orElse(null);
@@ -25,8 +32,7 @@ public class LightNovelController implements Controller {
 
     @Override
     public void insert(Tracker tracker) {
-        tracker.setId(++increment);
-        Menu.lightNovelList.add((LightNovel) tracker);
+        trackerFacade.lightNovel.insertLightNovel((LightNovel) tracker);
     }
 
 
@@ -34,7 +40,7 @@ public class LightNovelController implements Controller {
     public void delete(Tracker tracker) {
         LightNovel lightNovel = (LightNovel) tracker;
         if(lightNovel != null) {
-            Menu.lightNovelList.remove(lightNovel);
+            trackerFacade.lightNovel.deleteLightNovel(lightNovel.getId());
             System.out.println("Delete Succeeded from Light Novel Tracker");
         }else{
             System.out.println("Id not found");
@@ -44,11 +50,12 @@ public class LightNovelController implements Controller {
 
     @Override
     public void printAll() {
+        ArrayList<LightNovel> lightNovelList = trackerFacade.lightNovel.getLightNovelList();
         printLineTable();
         System.out.println("| Id | Light Novel's Name                  | Volume | Genre                                    | Progress  | Status      |");
         printLineTable();
-        if(Menu.lightNovelList.size() > 0){
-            for (LightNovel lnView : Menu.lightNovelList){
+        if(lightNovelList.size() > 0){
+            for (LightNovel lnView : lightNovelList){
                 System.out.printf("| %-2d | %-35s | %-6s | %-40s | PG %-6d | %-11s |\n", lnView.getId(), lnView.getNameSeries(), lnView.getCurrentVolume(), lnView.getGenre(), lnView.getCurrentPage(), lnView.getStatus());
             }
         }else{
@@ -60,7 +67,7 @@ public class LightNovelController implements Controller {
 
     @Override
     public void printByStatus(String status) {
-        List<LightNovel> lightNovels = Menu.lightNovelList.stream()
+        List<LightNovel> lightNovels = trackerFacade.lightNovel.getLightNovelList().stream()
                 .filter(x -> x.getStatus().equals(status))
                 .collect(Collectors.toList());
 

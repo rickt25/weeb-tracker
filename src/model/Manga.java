@@ -12,8 +12,14 @@ import static main.Menu.printLineTable;
 public class Manga extends Tracker {
     private int currentVolume, currentChapter;
 
-    public Manga(String nameSeries, String status, int rating, String genre, int currentVolume, int currentChapter) {
-        super(nameSeries, status, rating, genre);
+    public Manga(int id, int userId, String nameSeries, String status, Date startDate, int rating, String genre, int currentVolume, int currentChapter) {
+        super(id, userId, nameSeries, status, startDate, rating, genre);
+        this.currentVolume = currentVolume;
+        this.currentChapter = currentChapter;
+    }
+
+    public Manga(int userId, String nameSeries, String status, int rating, String genre, int currentVolume, int currentChapter) {
+        super(userId, nameSeries, status, rating, genre);
         this.currentVolume = currentVolume;
         this.currentChapter = currentChapter;
     }

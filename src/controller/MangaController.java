@@ -1,22 +1,31 @@
 package controller;
 
+import facades.TrackerFacade;
 import main.Main;
 import main.Menu;
+import model.Anime;
 import model.LightNovel;
 import model.Manga;
 import model.Tracker;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static main.Menu.printLineTable;
 
 public class MangaController implements Controller {
-    private static int increment = 0;
+    TrackerFacade trackerFacade = TrackerFacade.getInstance();
+
+    @Override
+    public boolean checkTracker() {
+        return trackerFacade.manga.getMangaList().size() > 0;
+    }
 
     @Override
     public Tracker find(int id, String status) {
-        return Menu.mangaList.stream()
+        ArrayList<Manga> mangaList = trackerFacade.manga.getMangaList();
+        return mangaList.stream()
                 .filter(x -> x.getId() == id && (x.getStatus().equals(status) || status.isEmpty()))
                 .findFirst()
                 .orElse(null);
@@ -24,15 +33,14 @@ public class MangaController implements Controller {
 
     @Override
     public void insert(Tracker tracker) {
-        tracker.setId(++increment);
-        Menu.mangaList.add((Manga) tracker);
+        trackerFacade.manga.insertManga((Manga) tracker);
     }
 
     @Override
     public void delete(Tracker tracker) {
         Manga manga = (Manga) tracker;
         if(manga != null) {
-            Menu.mangaList.remove(tracker);
+            trackerFacade.manga.deleteManga(manga.getId());
             System.out.println("Delete Succeeded from Manga Tracker");
         }else{
             System.out.println("Id not found");
@@ -42,11 +50,12 @@ public class MangaController implements Controller {
 
     @Override
     public void printAll() {
+        ArrayList<Manga> mangaList = trackerFacade.manga.getMangaList();
         printLineTable();
         System.out.println("| Id | Manga's Name                        | Volume | Genre                                    | Progress  | Status      |");
         printLineTable();
-        if(Menu.mangaList.size() > 0) {
-            for (Manga mangaView : Menu.mangaList) {
+        if(mangaList.size() > 0) {
+            for (Manga mangaView : mangaList) {
                 System.out.printf("| %-2d | %-35s | %-6s | %-40s | CH %-6d | %-11s |\n", mangaView.getId(), mangaView.getNameSeries(), mangaView.getCurrentVolume(), mangaView.getGenre(), mangaView.getCurrentChapter(), mangaView.getStatus());
             }
         }else{
@@ -61,7 +70,7 @@ public class MangaController implements Controller {
 
     @Override
     public void printByStatus(String status) {
-        List<Manga> mangas = Menu.mangaList.stream()
+        List<Manga> mangas = trackerFacade.manga.getMangaList().stream()
                 .filter(x -> x.getStatus().equals(status))
                 .collect(Collectors.toList());
         printLineTable();

@@ -3,6 +3,7 @@ package controller;
 import model.Tracker;
 
 public interface Controller {
+    boolean checkTracker();
     Tracker find(int id, String status); // this function will return an object
     void insert(Tracker tracker);
     void delete(Tracker tracker);

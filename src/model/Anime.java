@@ -14,9 +14,16 @@ public class Anime extends Tracker {
     private int totalEpisode;
     private int currentEpisode;
 
-    public Anime(String nameSeries, String status, int rating, String genre, int seasons, int totalEpisode, int currentEpisode) {
-        super(nameSeries, status, rating, genre);
-        this.season = seasons;
+    public Anime(int id, int userId, String nameSeries, String status, Date startDate, int rating, String genre, int season, int totalEpisode, int currentEpisode) {
+        super(id, userId, nameSeries, status, startDate, rating, genre);
+        this.season = season;
+        this.totalEpisode = totalEpisode;
+        this.currentEpisode = currentEpisode;
+    }
+
+    public Anime(int userId, String nameSeries, String status, int rating, String genre, int season, int totalEpisode, int currentEpisode) {
+        super(userId, nameSeries, status, rating, genre);
+        this.season = season;
         this.totalEpisode = totalEpisode;
         this.currentEpisode = currentEpisode;
     }

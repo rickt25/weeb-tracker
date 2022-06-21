@@ -1,17 +1,30 @@
 package model;
 
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Date;
 
 public abstract class Tracker {
     protected int id;
+    protected int userId;
     protected String nameSeries;
     protected String status;
     protected Date startDate;
     protected int rating;
     protected String genre;
 
-    public Tracker(String nameSeries, String status, int rating, String genre) {
+    public Tracker(int id, int userId, String nameSeries, String status, Date startDate, int rating, String genre) {
+        this.id = id;
+        this.userId = userId;
+        this.nameSeries = nameSeries;
+        this.status = status;
+        this.startDate = startDate;
+        this.rating = rating;
+        this.genre = genre;
+    }
+
+    public Tracker(int userId, String nameSeries, String status, int rating, String genre) {
+        this.userId = userId;
         this.nameSeries = nameSeries;
         this.status = status;
         this.startDate = new Date();
@@ -60,6 +73,14 @@ public abstract class Tracker {
     public String getGenre() { return genre; }
 
     public void setGenre(String genre) { this.genre = genre; }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
 
     public abstract void printDetail();
 
