@@ -30,8 +30,10 @@ public class LightNovelService {
     }
 
     public void insertLightNovel(LightNovel lightNovel){
+        java.util.Date date = new java.util.Date();
+        java.sql.Date sqlDate = new java.sql.Date(date.getTime());
         String query = String.format("INSERT INTO light_novel VALUES"
-                + "(null, '%s', '%s', %d, '%s', %d, %d)", lightNovel.getNameSeries(), lightNovel.getStatus(), lightNovel.getRating(), lightNovel.getGenre(), lightNovel.getCurrentVolume(), lightNovel.getCurrentPage());
+                + "(null, '%s', '%s', '%s', %d, '%s', %d, %d)", lightNovel.getNameSeries(), lightNovel.getStatus(), sqlDate, lightNovel.getRating(), lightNovel.getGenre(), lightNovel.getCurrentVolume(), lightNovel.getCurrentPage());
         con.executeUpdate(query);
     }
 
@@ -39,12 +41,11 @@ public class LightNovelService {
         String query = String.format("UPDATE LightNovel SET "
                         + "name = '%s', "
                         + "status = '%s', "
-                        + "startDate = '%s',"
                         + "rating = %d, "
                         + "genre = '%s', "
                         + "currentVolume = %d, "
                         + "currentPage = %d "
-                        + "WHERE id = %d", lightnovel.getNameSeries(), lightnovel.getStatus(), lightnovel.getStartDate(), lightnovel.getRating(),
+                        + "WHERE id = %d", lightnovel.getNameSeries(), lightnovel.getStatus(), lightnovel.getRating(),
                 lightnovel.getGenre(), lightnovel.getCurrentVolume(), lightnovel.getCurrentPage(), id);
         con.executeUpdate(query);
     }

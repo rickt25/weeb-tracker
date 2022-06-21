@@ -30,8 +30,10 @@ public class MangaService {
     }
 
     public void insertManga(Manga manga){
+        java.util.Date date = new java.util.Date();
+        java.sql.Date sqlDate = new java.sql.Date(date.getTime());
         String query = String.format("INSERT INTO manga VALUES"
-                        + "(null, '%s', '%s', '%s', %d, '%s', %d, %d)", manga.getNameSeries(), manga.getStatus(), manga.getStartDate(),
+                        + "(null, '%s', '%s', '%s', %d, '%s', %d, %d)", manga.getNameSeries(), manga.getStatus(), sqlDate,
                 manga.getRating(), manga.getGenre(), manga.getCurrentVolume(),manga.getCurrentChapter());
         con.executeUpdate(query);
     }
@@ -40,12 +42,11 @@ public class MangaService {
         String query = String.format("UPDATE manga SET "
                         + "name = '%s', "
                         + "status = '%s', "
-                        + "startDate = '%s',"
                         + "rating = %d, "
                         + "genre = '%s', "
                         + "currentVolume = %d, "
                         + "currentChapter = %d "
-                        + "WHERE id = %d", manga.getNameSeries(), manga.getStatus(), manga.getStartDate(), manga.getRating(),
+                        + "WHERE id = %d", manga.getNameSeries(), manga.getStatus(), manga.getRating(),
                 manga.getGenre(), manga.getCurrentVolume(),manga.getCurrentChapter(), id);
         con.executeUpdate(query);
     }
