@@ -77,7 +77,7 @@ public class Menu {
         currEpisode = inputNumber(1, "Input Current Episode", (totalEpisode == -1) ? 0 : totalEpisode);
         rating = inputNumber(1, "Input Anime's Rating [1-5]", 5);
         status = menuStatus[statusSelect() - 1];
-        anime = new Anime(69, name, status, rating, genre, seasons, totalEpisode, currEpisode);
+        anime = new Anime(1, name, status, rating, genre, seasons, totalEpisode, currEpisode);
         animeController.insert(anime);
     }
 
@@ -91,7 +91,7 @@ public class Menu {
         currentChap = inputNumber(1, "Input Manga's current chapter", 0);
         rating = inputNumber(1, "Input Manga's rating [1-5]", 5);
         status = menuStatus[statusSelect() - 1];
-        manga = new Manga(69, name, status, rating, genre, currentVolume, currentChap);
+        manga = new Manga(1, name, status, rating, genre, currentVolume, currentChap);
         mangaController.insert(manga);
     }
 
@@ -105,7 +105,7 @@ public class Menu {
         currentPage = inputNumber(1, "Input Light Novel's current page", 0);
         rating = inputNumber(1, "Input Light Novel's rating [1-5]", 5);
         status = menuStatus[statusSelect() - 1];
-        Ln = new LightNovel(69, name, status, rating, genre, currentVolume, currentPage);
+        Ln = new LightNovel(1, name, status, rating, genre, currentVolume, currentPage);
         lightNovelController.insert(Ln);
     }
 

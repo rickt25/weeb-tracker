@@ -12,6 +12,10 @@ import java.util.ArrayList;
 
 public class Main {
 
+    // Sebelum menjalankan aplikasi, pastikan meng-import SQL yg ada pada folder sql
+    // Nama Database : weeb-tracker
+    // note : jika ada username / password dapat di setting di database > Connect.java
+
     // 2 Design Pattern yg digunakan adalah Singleton dan Facade
     // Singleton ada pada :
     // database > Connect.java
