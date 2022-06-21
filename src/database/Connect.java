@@ -4,10 +4,10 @@ import java.sql.*;
 public final class Connect {
 	
 	private final String USERNAME = "root"; 
-	private final String PASSWORD = "password";
+	private final String PASSWORD = "";
 	private final String DATABASE = "weeb-tracker";
 	private final String HOST = "localhost:3306"; 
-	private final String CONECTION = String.format("jdbc:mysql://%s/%s?characterEncoding=latin1&useConfigs=maxPerformance", HOST, DATABASE);
+	private final String CONECTION = String.format("jdbc:mysql://%s/%s", HOST, DATABASE);
 	
 	public ResultSet rs;
 	public ResultSetMetaData rsm;
