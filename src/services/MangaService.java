@@ -9,12 +9,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class MangaService {
-    Connect con = Connect.getConnection();
+    private Connect con = Connect.getConnection();
 
-    public ArrayList<Manga> getMangaList(){
+    public ArrayList<Manga> getMangaList(int userId){
         ArrayList<Manga> temp = new ArrayList<Manga>();
 
-        String query = String.format("SELECT * FROM manga");
+        String query = String.format("SELECT * FROM manga WHERE userId =" + userId);
         ResultSet rs = con.executeQuery(query);
 
         try {
@@ -33,12 +33,12 @@ public class MangaService {
         java.util.Date date = new java.util.Date();
         java.sql.Date sqlDate = new java.sql.Date(date.getTime());
         String query = String.format("INSERT INTO manga VALUES"
-                        + "(null, '%s', '%s', '%s', %d, '%s', %d, %d)", manga.getNameSeries(), manga.getStatus(), sqlDate,
-                manga.getRating(), manga.getGenre(), manga.getCurrentVolume(),manga.getCurrentChapter());
+                        + "(null, '%s', '%s', '%s', %d, '%s', %d, %d, %d)", manga.getNameSeries(), manga.getStatus(), sqlDate,
+                manga.getRating(), manga.getGenre(), manga.getCurrentVolume(),manga.getCurrentChapter(), manga.getUserId());
         con.executeUpdate(query);
     }
 
-    public void updateManga(Manga manga, int id){
+    public void updateManga(Manga manga){
         String query = String.format("UPDATE manga SET "
                         + "name = '%s', "
                         + "status = '%s', "
@@ -47,7 +47,7 @@ public class MangaService {
                         + "currentVolume = %d, "
                         + "currentChapter = %d "
                         + "WHERE id = %d", manga.getNameSeries(), manga.getStatus(), manga.getRating(),
-                manga.getGenre(), manga.getCurrentVolume(),manga.getCurrentChapter(), id);
+                manga.getGenre(), manga.getCurrentVolume(),manga.getCurrentChapter(), manga.getId());
         con.executeUpdate(query);
     }
 

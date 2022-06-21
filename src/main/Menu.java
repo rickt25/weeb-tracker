@@ -6,9 +6,18 @@ import controller.MangaController;
 import model.Anime;
 import model.LightNovel;
 import model.Manga;
+import model.User;
+import services.PasswordService;
+import services.UserService;
 
-import java.util.ArrayList;
+import java.io.*;
+
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.Calendar;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Menu {
     public static AnimeController animeController = new AnimeController();
@@ -16,12 +25,36 @@ public class Menu {
     public static LightNovelController lightNovelController = new LightNovelController();
     private String[] menuStatus = {"Planning", "On Progress", "Finished", ""};
     private Scanner sc = new Scanner(System.in);
+    private User userLogin = null;
+    private String test;
 
-    public void operations(){
+    public void home(){
         int choice = 0;
         boolean loopMenu = true;
         do{
-            homeMenu();
+            isLogin();
+            try{
+                choice = sc.nextInt();
+            }catch (Exception e){
+                System.out.println("Input must be a number!");
+                continue;
+            }finally {
+                sc.nextLine();
+            }
+            System.out.println();
+            switch(choice){
+                case 1: login(); break;
+                case 2: register(); break;
+                case 3: loopMenu = false; continue;
+                default: break;
+            }
+        }while(loopMenu);
+    }
+    private void homeTracker(){
+        int choice = 0;
+        boolean loopMenu = true;
+        do{
+            isTrack();
             try{
                 choice = sc.nextInt();
             }catch (Exception e){
@@ -34,12 +67,170 @@ public class Menu {
             switch(choice){
                 case 1: addTracker(); break;
                 case 2: viewTracker(); break;
-                case 3: loopMenu = false; continue;
+                case 3: {
+                    userLogin = null;
+                    loopMenu = false; continue;
+                }
                 default: break;
             }
+
         }while(loopMenu);
     }
+    private void register(){
+        String name, email, password, rePassword;
+        LocalDate dob;
+        int day, month, year;
+        System.out.println("====================");
+        System.out.println("|     Register     |");
+        System.out.println("====================");
+        System.out.println();
+        do {
+            System.out.print("Input Name [name length must be at 4 to 20]: ");
+            name = sc.nextLine();
+            if(name.length() >= 4 && name.length() <= 20){
+                break;
+            }else{
+                System.out.println("Name length must be at 4 to 20");
+                System.out.println("Press Enter to Continue...");
+                sc.nextLine();
+            }
+        }while(true);
+        do {
+            Pattern patternEmail = Pattern.compile("[A-Za-z0-9._%+-]+@gmail.com");
+            System.out.print("Input email [must ends with '@gmail.com']: ");
+            email = sc.nextLine().toLowerCase();
+            Matcher match = patternEmail.matcher(email);
+            if(match.matches()){
+                break;
+            }else{
+                System.out.println("Must ends with '@gmail.com'");
+                System.out.println("Press Enter to Continue...");
+                sc.nextLine();
+            }
+        }while(true);
+        do{
+            System.out.print("Input Date of Birth [YEAR (XXXX) must be between 1990 to " + Calendar.getInstance().get(Calendar.YEAR) +"]: ");
+            try{
+                year = sc.nextInt();
+            }catch (Exception e){
+                System.out.println("Input must be a number!");
+                continue;
+            }finally {
+                sc.nextLine();
+            }
+            if(year < 1990 || year > Calendar.getInstance().get(Calendar.YEAR)){
+                System.out.println("Year must be between 1990 to " + Calendar.getInstance().get(Calendar.YEAR));
+                System.out.println("Press Enter to Continue...");
+                sc.nextLine();
+            }else{
+                break;
+            }
+        }while(true);
+        do{
+            System.out.print("Input Date of Birth [MONTH must be between 1 to 12]: ");
 
+            try{
+                month = sc.nextInt();
+            }catch (Exception e){
+                System.out.println("Input must be a number!");
+                continue;
+            }finally {
+                sc.nextLine();
+            }
+            if(month < 1 || month > 12){
+                System.out.println("month must be between 1 to 12");
+                System.out.println("Press Enter to Continue...");
+                sc.nextLine();
+            }else{
+                break;
+            }
+        }while(true);
+        do{
+            System.out.print("Input Date of Birth [DAY must be between 1 to " + YearMonth.of(year, month).lengthOfMonth() +"]: ");
+            try{
+                day = sc.nextInt();
+            }catch (Exception e){
+                System.out.println("Input must be a number!");
+                continue;
+            }finally {
+                sc.nextLine();
+            }
+            if(day < 1 || day > YearMonth.of(year, month).lengthOfMonth()){
+                System.out.println("Day must be between 1 to " + YearMonth.of(year, month).lengthOfMonth());
+                System.out.println("Press Enter to Continue...");
+                sc.nextLine();
+            }else{
+                break;
+            }
+        }while(true);
+        dob = LocalDate.of(year, month, day);
+        do {
+            System.out.print("Input password: ");
+            password = sc.nextLine();
+            if(password.length() < 8){
+                System.out.println("Password length must be more than 7");
+                System.out.println("Press Enter to Continue...");
+                sc.nextLine();
+                continue;
+            }
+            System.out.print("Re-input password: ");
+            rePassword = sc.nextLine();
+            if(password.equals(rePassword)){
+                break;
+            }else{
+                System.out.println("Password not match");
+                System.out.println("Press Enter to Continue...");
+                sc.nextLine();
+            }
+        }while(true);
+        password = PasswordService.encrypt(password);
+        test = password;
+        userLogin = new User(name, email, password, dob);
+        UserService.insertUser(userLogin);
+        userLogin = null;
+        System.out.println("Register successfull");
+        System.out.println("Press Enter to Continue...");
+        sc.nextLine();
+    }
+    private void login(){
+        String email, password;
+        System.out.println("====================");
+        System.out.println("|      Login       |");
+        System.out.println("====================");
+        System.out.println();
+        do {
+            Pattern patternEmail = Pattern.compile("[A-Za-z0-9._%+-]+@gmail.com");
+            System.out.print("Input email [must ends with '@gmail.com']: ");
+            email = sc.nextLine().toLowerCase();
+            Matcher match = patternEmail.matcher(email);
+            if(match.matches()){
+                break;
+            }else{
+                System.out.println("Must ends with '@gmail.com'");
+                System.out.println("Press Enter to Continue...");
+                sc.nextLine();
+            }
+        }while(true);
+        do {
+            System.out.print("Input password: ");
+            password = sc.nextLine();
+            if(password.length() >= 8){
+                break;
+            }else{
+                System.out.println("Password length must be more than 7");
+                System.out.println("Press Enter to Continue...");
+                sc.nextLine();
+            }
+        }while(true);
+        userLogin = UserService.getUser(email, password);
+        if(userLogin != null){
+            homeTracker();
+        }else{
+            System.out.println("Email or Password Invalid");
+            System.out.println("Press Enter to Continue...");
+            sc.nextLine();
+        }
+    }
     private void addTracker(){
         int choice = 0;
         do{
@@ -77,7 +268,7 @@ public class Menu {
         currEpisode = inputNumber(1, "Input Current Episode", (totalEpisode == -1) ? 0 : totalEpisode);
         rating = inputNumber(1, "Input Anime's Rating [1-5]", 5);
         status = menuStatus[statusSelect() - 1];
-        anime = new Anime(1, name, status, rating, genre, seasons, totalEpisode, currEpisode);
+        anime = new Anime(userLogin.getId(), name, status, rating, genre, seasons, totalEpisode, currEpisode);
         animeController.insert(anime);
     }
 
@@ -91,7 +282,7 @@ public class Menu {
         currentChap = inputNumber(1, "Input Manga's current chapter", 0);
         rating = inputNumber(1, "Input Manga's rating [1-5]", 5);
         status = menuStatus[statusSelect() - 1];
-        manga = new Manga(1, name, status, rating, genre, currentVolume, currentChap);
+        manga = new Manga(userLogin.getId(), name, status, rating, genre, currentVolume, currentChap);
         mangaController.insert(manga);
     }
 
@@ -105,7 +296,7 @@ public class Menu {
         currentPage = inputNumber(1, "Input Light Novel's current page", 0);
         rating = inputNumber(1, "Input Light Novel's rating [1-5]", 5);
         status = menuStatus[statusSelect() - 1];
-        Ln = new LightNovel(1, name, status, rating, genre, currentVolume, currentPage);
+        Ln = new LightNovel(userLogin.getId(), name, status, rating, genre, currentVolume, currentPage);
         lightNovelController.insert(Ln);
     }
 
@@ -113,7 +304,7 @@ public class Menu {
         int choice = 0;
         boolean loopMenu = true;
         do{
-        	  System.out.println("====================");
+            System.out.println("====================");
             System.out.println("|   View Tracker   |");
             System.out.println("====================");
             trackerType();
@@ -141,12 +332,12 @@ public class Menu {
         boolean loop = true;
         String filter = "";
         Anime anime = null;
-        if(animeController.checkTracker()){
+        if(animeController.checkTracker(userLogin.getId())){
             do{
                 if(filter.isEmpty()){
-                    animeController.printAll();
+                    animeController.printAll(userLogin.getId());
                 }else{
-                    animeController.printByStatus(filter);
+                    animeController.printByStatus(filter, userLogin.getId());
                 }
                 menuView("Anime");
                 try{
@@ -162,12 +353,12 @@ public class Menu {
                     int selectedId = 0;
                     do{
                         if(filter.isEmpty()){
-                            animeController.printAll();
+                            animeController.printAll(userLogin.getId());
                         }else{
-                            animeController.printByStatus(filter);
+                            animeController.printByStatus(filter, userLogin.getId());
                         }
                         selectedId = inputNumber(0, "Input Id to see the detail [Input 0 to 'Cancel']", 0);
-                        anime = (Anime)animeController.find(selectedId, filter);
+                        anime = (Anime)animeController.find(selectedId, filter, userLogin.getId());
                         System.out.println();
                     }while(anime == null && selectedId != 0);
                     if(selectedId != 0){
@@ -185,10 +376,12 @@ public class Menu {
                             }
                             if(choiceUpdate == 1){
                                 anime.setStatus(menuStatus[statusSelect() - 1]);
+                                animeController.update(anime);
                             }else if(choiceUpdate == 2){
                                 int updateProgress = 0;
                                 do{
                                     try{
+                                        System.out.print("Update progress to [current = " +  anime.getCurrEpisode() +"]: ");
                                         updateProgress = sc.nextInt();
                                     }catch (Exception e){
                                         System.out.println("Input must be a number!");
@@ -196,8 +389,9 @@ public class Menu {
                                     }finally {
                                         sc.nextLine();
                                     }
-                                }while((updateProgress >= 1 && updateProgress <= (anime.getTotalEpisode() == -1 ? Integer.MAX_VALUE : anime.getTotalEpisode())));
+                                }while(!(updateProgress >= 1 && updateProgress <= (anime.getTotalEpisode() == -1 ? Integer.MAX_VALUE : anime.getTotalEpisode())));
                                 anime.setCurrEpisode(updateProgress);
+                                animeController.update(anime);
                             }else if(choiceUpdate == 3){
                                 String status, genre;
                                 int rating, seasons, totalEpisode, currEpisode;
@@ -211,6 +405,7 @@ public class Menu {
                                 anime.setRating(rating);
                                 anime.setCurrEpisode(currEpisode);
                                 anime.setStatus(status);
+                                animeController.update(anime);
                                 System.out.println("Update Success...");
                             }else if(choiceUpdate == 4){
                                 String confirmDelete;
@@ -233,9 +428,9 @@ public class Menu {
                     int selectStatus;
                     do{
                         if(filter.isEmpty()){
-                            animeController.printAll();
+                            animeController.printAll(userLogin.getId());
                         }else{
-                            animeController.printByStatus(filter);
+                            animeController.printByStatus(filter, userLogin.getId());
                         }
                         System.out.println("=============");
                         System.out.println("| Filter by |");
@@ -261,12 +456,12 @@ public class Menu {
         boolean loop = true;
         String filter = "";
         Manga manga = null;
-        if(mangaController.checkTracker()){
+        if(mangaController.checkTracker(userLogin.getId())){
             do{
                 if(filter.isEmpty()){
-                    mangaController.printAll();
+                    mangaController.printAll(userLogin.getId());
                 }else{
-                    mangaController.printByStatus(filter);
+                    mangaController.printByStatus(filter, userLogin.getId());
                 }
                 menuView("Manga");
                 try{
@@ -282,12 +477,12 @@ public class Menu {
                     int selectedId = 0;
                     do{
                         if(filter.isEmpty()){
-                            mangaController.printAll();
+                            mangaController.printAll(userLogin.getId());
                         }else{
-                            mangaController.printByStatus(filter);
+                            mangaController.printByStatus(filter, userLogin.getId());
                         }
                         selectedId = inputNumber(0, "Input Id to see the detail [Input 0 to 'Cancel']", 0);
-                        manga = (Manga) mangaController.find(selectedId, filter);
+                        manga = (Manga) mangaController.find(selectedId, filter, userLogin.getId());
                         System.out.println();
                     }while(manga == null && selectedId != 0);
                     if(selectedId != 0){
@@ -306,10 +501,12 @@ public class Menu {
 
                             if(choiceUpdate == 1){
                                 manga.setStatus(menuStatus[statusSelect() - 1]);
+                                mangaController.update(manga);
                             }else if(choiceUpdate == 2){
                                 int updateProgress = 0;
                                 do{
                                     try{
+                                        System.out.print("Update progress to [current = " +  manga.getCurrentChapter() +"]: ");
                                         updateProgress = sc.nextInt();
                                     }catch (Exception e){
                                         System.out.println("Input must be a number!");
@@ -319,6 +516,7 @@ public class Menu {
                                     }
                                 }while(!(updateProgress >= 1));
                                 manga.setCurrentChapter(updateProgress);
+                                mangaController.update(manga);
                             }else if(choiceUpdate == 3){
                                 String status, genre;
                                 int rating, volume, currChapter;
@@ -332,6 +530,7 @@ public class Menu {
                                 manga.setRating(rating);
                                 manga.setCurrentChapter(currChapter);
                                 manga.setStatus(status);
+                                mangaController.update(manga);
                                 System.out.println("Update Success...");
                             }else if(choiceUpdate == 4){
                                 String confirmDelete;
@@ -354,9 +553,9 @@ public class Menu {
                     int selectStatus;
                     do{
                         if(filter.isEmpty()){
-                            mangaController.printAll();
+                            mangaController.printAll(userLogin.getId());
                         }else{
-                            mangaController.printByStatus(filter);
+                            mangaController.printByStatus(filter, userLogin.getId());
                         }
                         System.out.println("=============");
                         System.out.println("| Filter by |");
@@ -382,12 +581,12 @@ public class Menu {
         boolean loop = true;
         String filter = "";
         LightNovel ln = null;
-        if(lightNovelController.checkTracker()){
+        if(lightNovelController.checkTracker(userLogin.getId())){
             do{
                 if(filter.isEmpty()){
-                    lightNovelController.printAll();
+                    lightNovelController.printAll(userLogin.getId());
                 }else{
-                    lightNovelController.printByStatus(filter);
+                    lightNovelController.printByStatus(filter,userLogin.getId());
                 }
                 menuView("Light Novel");
                 try{
@@ -403,12 +602,12 @@ public class Menu {
                     int selectedId = 0;
                     do{
                         if(filter.isEmpty()){
-                            lightNovelController.printAll();
+                            lightNovelController.printAll(userLogin.getId());
                         }else{
-                            lightNovelController.printByStatus(filter);
+                            lightNovelController.printByStatus(filter, userLogin.getId());
                         }
                         selectedId = inputNumber(0, "Input Id to see the detail [Input 0 to 'Cancel']", 0);
-                        ln = (LightNovel) lightNovelController.find(selectedId, filter);
+                        ln = (LightNovel) lightNovelController.find(selectedId, filter,userLogin.getId());
                         System.out.println();
                     }while(ln == null && selectedId != 0);
                     if(selectedId != 0){
@@ -427,10 +626,12 @@ public class Menu {
 
                             if(choiceUpdate == 1){
                                 ln.setStatus(menuStatus[statusSelect() - 1]);
+                                lightNovelController.update(ln);
                             }else if(choiceUpdate == 2){
                                 int updateProgress = 0;
                                 do{
                                     try{
+                                        System.out.print("Update progress to [current = " +  ln.getCurrentPage() +"]: ");
                                         updateProgress = sc.nextInt();
                                     }catch (Exception e){
                                         System.out.println("Input must be a number!");
@@ -440,6 +641,7 @@ public class Menu {
                                     }
                                 }while(!(updateProgress >= 1));
                                 ln.setCurrentPage(updateProgress);
+                                lightNovelController.update(ln);
                             }else if(choiceUpdate == 3){
                                 String status, genre;
                                 int rating, volume, currPage;
@@ -453,6 +655,7 @@ public class Menu {
                                 ln.setRating(rating);
                                 ln.setCurrentPage(currPage);
                                 ln.setStatus(status);
+                                lightNovelController.update(ln);
                                 System.out.println("Update Success...");
                             }else if(choiceUpdate == 4){
                                 String confirmDelete;
@@ -475,9 +678,9 @@ public class Menu {
                     int selectStatus;
                     do{
                         if(filter.isEmpty()){
-                            lightNovelController.printAll();
+                            lightNovelController.printAll(userLogin.getId());
                         }else{
-                            lightNovelController.printByStatus(filter);
+                            lightNovelController.printByStatus(filter,userLogin.getId());
                         }
                         System.out.println("=============");
                         System.out.println("| Filter by |");
@@ -521,7 +724,7 @@ public class Menu {
         System.out.print(">> ");
     }
 
-    private void homeMenu(){
+    private void homeTitle(){
         System.out.println(" /$$      /$$                     /$$             /$$$$$$$$                           /$$");
         System.out.println("| $$  /$ | $$                    | $$            |__  $$__/                          | $$");
         System.out.println("| $$ /$$$| $$  /$$$$$$   /$$$$$$ | $$$$$$$          | $$  /$$$$$$  /$$$$$$   /$$$$$$$| $$   /$$  /$$$$$$   /$$$$$$");
@@ -532,11 +735,23 @@ public class Menu {
         System.out.println("|__/     \\__/ \\_______/ \\_______/|_______/          |__/|__/      \\_______/ \\_______/|__/  \\__/ \\_______/|__/");
         System.out.println("=======================================================================================================================");
         System.out.println();
-        System.out.println("1. Add Tracker");
-        System.out.println("2. View Tracker");
-        System.out.print(">> ");
+
     }
 
+    private void isLogin(){
+        homeTitle();
+        System.out.println("1. Login");
+        System.out.println("2. Register");
+        System.out.println("3. Exit");
+        System.out.print(">> ");
+    }
+    private void isTrack(){
+        homeTitle();
+        System.out.println("1. Add Tracker");
+        System.out.println("2. View Tracker");
+        System.out.println("3. Log Out");
+        System.out.print(">> ");
+    }
     private void trackerType(){
         System.out.println("| 1. Anime         |");
         System.out.println("| 2. Manga         |");

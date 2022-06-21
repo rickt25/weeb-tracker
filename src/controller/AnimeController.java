@@ -15,13 +15,13 @@ public class AnimeController implements Controller {
     TrackerFacade trackerFacade = TrackerFacade.getInstance();
 
     @Override
-    public boolean checkTracker() {
-        return trackerFacade.anime.getAnimeList().size() > 0;
+    public boolean checkTracker(int userId) {
+        return trackerFacade.anime.getAnimeList(userId).size() > 0;
     }
 
     @Override
-    public Tracker find(int id, String status) {
-        ArrayList<Anime> animeList = trackerFacade.anime.getAnimeList();
+    public Tracker find(int id, String status, int userId) {
+        ArrayList<Anime> animeList = trackerFacade.anime.getAnimeList(userId);
         return animeList.stream()
                 .filter(x -> x.getId() == id && (x.getStatus().equals(status) || status.isEmpty()))
                 .findFirst()
@@ -47,8 +47,8 @@ public class AnimeController implements Controller {
     }
 
     @Override
-    public void printAll() {
-        ArrayList<Anime> animeList = trackerFacade.anime.getAnimeList();
+    public void printAll(int userId) {
+        ArrayList<Anime> animeList = trackerFacade.anime.getAnimeList(userId);
         printLineTable();
         System.out.println("| Id | Anime's Name                        | Season | Genre                                    | Progress  | Status      |");
         printLineTable();
@@ -64,8 +64,8 @@ public class AnimeController implements Controller {
     }
 
     @Override
-    public void printByStatus(String status) {
-        List<Anime> animeList = trackerFacade.anime.getAnimeList().stream()
+    public void printByStatus(String status, int userId) {
+        List<Anime> animeList = trackerFacade.anime.getAnimeList(userId).stream()
                 .filter(x -> x.getStatus().equals(status))
                 .collect(Collectors.toList());
         printLineTable();
@@ -84,5 +84,10 @@ public class AnimeController implements Controller {
 
         printLineTable();
         System.out.println();
+    }
+
+    @Override
+    public void update(Tracker tracker) {
+        trackerFacade.anime.updateAnime((Anime) tracker);
     }
 }

@@ -8,12 +8,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class AnimeService {
-    Connect con = Connect.getConnection();
+    private static Connect con = Connect.getConnection();
 
-    public ArrayList<Anime> getAnimeList(){
+    public ArrayList<Anime> getAnimeList(int userId){
         ArrayList<Anime> temp = new ArrayList<Anime>();
 
-        String query = "SELECT * FROM anime";
+        String query = String.format("SELECT * FROM anime WHERE userId =" + userId);
         ResultSet rs = con.executeQuery(query);
 
         try {
@@ -36,7 +36,7 @@ public class AnimeService {
         con.executeUpdate(query);
     }
 
-    public void updateAnime(Anime anime, int id){
+    public void updateAnime(Anime anime){
         String query = String.format("UPDATE anime SET "
                         + "name = '%s', "
                         + "status = '%s', "
@@ -46,7 +46,7 @@ public class AnimeService {
                         + "totalEpisode = %d, "
                         + "currentEpisode = %d "
                         + "WHERE id = %d", anime.getNameSeries(), anime.getStatus(), anime.getRating(),
-                anime.getGenre(), anime.getSeason(), anime.getTotalEpisode(), anime.getCurrEpisode(), id);
+                anime.getGenre(), anime.getSeason(), anime.getTotalEpisode(), anime.getCurrEpisode(), anime.getId());
         con.executeUpdate(query);
     }
 

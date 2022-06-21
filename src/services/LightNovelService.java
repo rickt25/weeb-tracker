@@ -9,12 +9,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class LightNovelService {
-    Connect con = Connect.getConnection();
+    private Connect con = Connect.getConnection();
 
-    public ArrayList<LightNovel> getLightNovelList(){
+    public ArrayList<LightNovel> getLightNovelList(int userId){
         ArrayList<LightNovel> temp = new ArrayList<LightNovel>();
 
-        String query = String.format("SELECT * FROM light_novel");
+        String query = String.format("SELECT * FROM light_novel WHERE userId =" + userId);
         ResultSet rs = con.executeQuery(query);
 
         try {
@@ -33,12 +33,12 @@ public class LightNovelService {
         java.util.Date date = new java.util.Date();
         java.sql.Date sqlDate = new java.sql.Date(date.getTime());
         String query = String.format("INSERT INTO light_novel VALUES"
-                + "(null, '%s', '%s', '%s', %d, '%s', %d, %d)", lightNovel.getNameSeries(), lightNovel.getStatus(), sqlDate, lightNovel.getRating(), lightNovel.getGenre(), lightNovel.getCurrentVolume(), lightNovel.getCurrentPage());
+                + "(null, '%s', '%s', '%s', %d, '%s', %d, %d, %d)", lightNovel.getNameSeries(), lightNovel.getStatus(), sqlDate, lightNovel.getRating(), lightNovel.getGenre(), lightNovel.getCurrentVolume(), lightNovel.getCurrentPage(), lightNovel.getUserId());
         con.executeUpdate(query);
     }
 
-    public void updateLightNovel(LightNovel lightnovel, int id){
-        String query = String.format("UPDATE LightNovel SET "
+    public void updateLightNovel(LightNovel lightnovel){
+        String query = String.format("UPDATE Light_novel SET "
                         + "name = '%s', "
                         + "status = '%s', "
                         + "rating = %d, "
@@ -46,12 +46,12 @@ public class LightNovelService {
                         + "currentVolume = %d, "
                         + "currentPage = %d "
                         + "WHERE id = %d", lightnovel.getNameSeries(), lightnovel.getStatus(), lightnovel.getRating(),
-                lightnovel.getGenre(), lightnovel.getCurrentVolume(), lightnovel.getCurrentPage(), id);
+                lightnovel.getGenre(), lightnovel.getCurrentVolume(), lightnovel.getCurrentPage(), lightnovel.getId());
         con.executeUpdate(query);
     }
 
     public void deleteLightNovel(int id){
-        String query = String.format("DELETE FROM LightNovel WHERE id = %d", id);
+        String query = String.format("DELETE FROM Light_novel WHERE id = %d", id);
         con.executeUpdate(query);
     }
 }

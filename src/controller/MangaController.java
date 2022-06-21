@@ -18,13 +18,13 @@ public class MangaController implements Controller {
     TrackerFacade trackerFacade = TrackerFacade.getInstance();
 
     @Override
-    public boolean checkTracker() {
-        return trackerFacade.manga.getMangaList().size() > 0;
+    public boolean checkTracker(int userId) {
+        return trackerFacade.manga.getMangaList(userId).size() > 0;
     }
 
     @Override
-    public Tracker find(int id, String status) {
-        ArrayList<Manga> mangaList = trackerFacade.manga.getMangaList();
+    public Tracker find(int id, String status, int userId) {
+        ArrayList<Manga> mangaList = trackerFacade.manga.getMangaList(userId);
         return mangaList.stream()
                 .filter(x -> x.getId() == id && (x.getStatus().equals(status) || status.isEmpty()))
                 .findFirst()
@@ -49,8 +49,8 @@ public class MangaController implements Controller {
     }
 
     @Override
-    public void printAll() {
-        ArrayList<Manga> mangaList = trackerFacade.manga.getMangaList();
+    public void printAll(int userId) {
+        ArrayList<Manga> mangaList = trackerFacade.manga.getMangaList(userId);
         printLineTable();
         System.out.println("| Id | Manga's Name                        | Volume | Genre                                    | Progress  | Status      |");
         printLineTable();
@@ -69,8 +69,8 @@ public class MangaController implements Controller {
     }
 
     @Override
-    public void printByStatus(String status) {
-        List<Manga> mangas = trackerFacade.manga.getMangaList().stream()
+    public void printByStatus(String status, int userId) {
+        List<Manga> mangas = trackerFacade.manga.getMangaList(userId).stream()
                 .filter(x -> x.getStatus().equals(status))
                 .collect(Collectors.toList());
         printLineTable();
@@ -88,5 +88,10 @@ public class MangaController implements Controller {
         }
         printLineTable();
         System.out.println();
+    }
+
+    @Override
+    public void update(Tracker tracker) {
+        trackerFacade.manga.updateManga((Manga) tracker);
     }
 }
